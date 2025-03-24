@@ -10,8 +10,7 @@
 
     <xsl:param name="dsc-first-c-levels-to-process-before-a-table" select="('series', 'collection', 'fonds')"/>
     <xsl:param name="levels-to-force-a-page-break" select="('series', 'collection', 'fonds')"/>  
-    <!-- note that pagebreak is now going to force page breaks.  make sure to get feedback -->
-    <xsl:param name="otherlevels-to-force-a-page-break-and-process-before-a-table" select="('accession', 'acquisition', 'pagebreak')"/>
+    <xsl:param name="otherlevels-to-force-a-page-break-and-process-before-a-table" select="('accession', 'acquisition')"/>
     
     <!-- not worrying about multiple DSC sections.  ASpace can only export 1 DSC -->
     <xsl:template match="ead3:dsc">
@@ -194,6 +193,9 @@
         </xsl:variable>
         <!--  need to do something here to fix rows that have REALLY long notes. see 15.pdf -->
         <fo:table-row>
+            <xsl:if test="@otherlevel eq 'pagebreak'">
+                <xsl:attribute name="break-before" select="'page'"/>
+            </xsl:if>
             <xsl:call-template name="dsc-table-row-border">
                 <xsl:with-param name="last-row" select="$last-row"/>
                 <xsl:with-param name="no-children" select="$no-children"/>

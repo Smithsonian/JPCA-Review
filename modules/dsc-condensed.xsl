@@ -8,11 +8,6 @@
     
     <!-- this file is imported by "ead3-to-pdf-ua.xsl" -->
 
-    <!-- note, removed recordgrp from the below, for JPCA example -->
-    <xsl:param name="dsc-first-c-levels-to-process-before-a-table" select="('series', 'collection', 'fonds')"/>
-    <xsl:param name="levels-to-force-a-page-break" select="('series', 'collection', 'fonds')"/>
-    <xsl:param name="otherlevels-to-force-a-page-break-and-process-before-a-table" select="('accession', 'acquisition')"/>
-    
     <!-- not worrying about multiple DSC sections.  ASpace can only export 1 DSC -->
     <xsl:template match="ead3:dsc" mode="condensed">
         <fo:page-sequence master-reference="contents">
