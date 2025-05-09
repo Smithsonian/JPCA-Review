@@ -1,2 +1,3 @@
-# JPCA-Review
-Potentially temporary repository to store validation procedures, oXygen projects, and the initial PDF/A pipeline.
+# JPCA EAD3-to-PDF-UA
+
+Process for running everything will be added to the repository Wiki page.

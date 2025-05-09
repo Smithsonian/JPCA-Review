@@ -1,0 +1,7 @@
+config/fonts
+config/logos
+local_EAD/*/*
+local_EAD/*.xml
+.DS_Store
+JPCA-Review.xpr
+
