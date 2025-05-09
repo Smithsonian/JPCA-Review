@@ -42,7 +42,7 @@
                     show="new">
                     <descriptivenote>
                         <p>
-                            <xsl:apply-templates select="ead3:unittitle"/>
+                            <xsl:value-of select="ead3:unittitle"/>
                         </p>
                     </descriptivenote>
                 </dao>

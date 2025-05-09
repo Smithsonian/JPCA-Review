@@ -127,6 +127,9 @@
   <!-- the deep-equal stuff in the next two templates allow us to superimpose the dao link with the unittitle
     when the two match -->
   <xsl:template match="ead3:dao[not(@show='embed')][@href][ead3:descriptivenote/ead3:p]" mode="#all">
+    <xsl:variable name="link" select="@href"/>
+    <!-- okay to just add title, or should / will i (need to) add an identifier, too? -->
+    <xsl:variable name="rcv-differentiator" select="'#title=' || replace(../ead3:unittitle[1], '[\W-[ ]]', '') => replace(' ', '-')"/>
     <xsl:choose>
       <xsl:when test="../ead3:unittitle and deep-equal(ead3:descriptivenote/mdc:extract-text-no-spaces(ead3:p[1]), ../mdc:extract-text-no-spaces(ead3:unittitle[1]))"/>
       <!-- should i add something to compare descriptivenote/p with a unitdate element?  or do a combine-title-and-date function here???
@@ -134,7 +137,7 @@
       -->
       <xsl:otherwise>
         <fo:block>
-          <fo:basic-link external-destination="url('{@href}')" xsl:use-attribute-sets="ref">
+          <fo:basic-link external-destination="url('{$link || $rcv-differentiator}')" xsl:use-attribute-sets="ref">
             <xsl:apply-templates select="ead3:descriptivenote/ead3:p" mode="dao"/>
           </fo:basic-link>
         </fo:block>
@@ -142,11 +145,13 @@
     </xsl:choose>
   </xsl:template>
   <xsl:template match="ead3:daoset/ead3:dao[not(@show='embed')][@href][../ead3:descriptivenote/ead3:p]" mode="#all" priority="5">
+    <xsl:variable name="link" select="@href"/>
+    <xsl:variable name="rcv-differentiator" select="'#title=' || replace(../../ead3:unittitle[1], '[\W-[ ]]', '') => replace(' ', '-')"/>
     <xsl:choose>
       <xsl:when test="../../ead3:unittitle and deep-equal(../ead3:descriptivenote/mdc:extract-text-no-spaces(ead3:p[1]), ../../mdc:extract-text-no-spaces(ead3:unittitle[1]))"/>
       <xsl:otherwise>
         <fo:block>
-          <fo:basic-link external-destination="url('{@href}')" xsl:use-attribute-sets="ref">
+          <fo:basic-link external-destination="url('{$link || $rcv-differentiator}')" xsl:use-attribute-sets="ref">
             <xsl:apply-templates select="../ead3:descriptivenote/ead3:p" mode="dao"/>
           </fo:basic-link>
         </fo:block>
@@ -155,21 +160,32 @@
   </xsl:template>
 
   <xsl:template match="ead3:unittitle[../ead3:dao[not(@show='embed')]]" mode="#all">
+    <xsl:variable name="link" select="../ead3:dao[not(@show='embed')][1]/@href"/>
+    <xsl:variable name="rcv-differentiator" select="'#title=' || replace(., '[\W-[ ]]', '') => replace(' ', '-')"/>
     <xsl:choose>
       <xsl:when test="deep-equal(mdc:extract-text-no-spaces(.), ../ead3:dao[1]/ead3:descriptivenote/mdc:extract-text-no-spaces(ead3:p[1]))">
-        <fo:basic-link external-destination="url('{../ead3:dao[not(@show='embed')][1]/@href}')" xsl:use-attribute-sets="ref">
-          <xsl:apply-templates select="../ead3:dao[1]/ead3:descriptivenote/ead3:p" mode="dao"/>
-        </fo:basic-link>
+        <fo:block>
+          <fo:basic-link external-destination="url('{$link || $rcv-differentiator}')" xsl:use-attribute-sets="ref">
+            <xsl:apply-templates select="../ead3:dao[1]/ead3:descriptivenote/ead3:p" mode="dao"/>
+          </fo:basic-link>
+        </fo:block>
+        <!-- need to add a hash differentiator for the links, to get around the FOP issue with the JPCA slugs -->
+        <!-- so, $link || '#title={replace(unittitle, '\W', '')} 
+        but, let's keep single spaces as underscores ?
+        -->
       </xsl:when>
       <xsl:otherwise>
         <xsl:apply-templates/>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
+  
   <xsl:template match="ead3:unittitle[../ead3:daoset/ead3:dao[not(@show='embed')]]" mode="#all" priority="2">
+    <xsl:variable name="link" select="../ead3:daoset[1]/ead3:dao[not(@show='embed')][1]/@href"/>
+    <xsl:variable name="rcv-differentiator" select="'#title=' || replace(., '[\W-[ ]]', '') => replace(' ', '-')"/>
     <xsl:choose>
       <xsl:when test="deep-equal(mdc:extract-text-no-spaces(.), ../ead3:daoset[1]/ead3:descriptivenote/mdc:extract-text-no-spaces(ead3:p[1]))">
-        <fo:basic-link external-destination="url('{../ead3:daoset[1]/ead3:dao[not(@show='embed')][1]/@href}')" xsl:use-attribute-sets="ref">
+        <fo:basic-link external-destination="url('{$link || $rcv-differentiator}')" xsl:use-attribute-sets="ref">
           <xsl:apply-templates select="../ead3:daoset[1]/ead3:descriptivenote/ead3:p" mode="dao"/>
         </fo:basic-link>
       </xsl:when>

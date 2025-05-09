@@ -193,7 +193,7 @@
         </xsl:variable>
         <!--  need to do something here to fix rows that have REALLY long notes. see 15.pdf -->
         <fo:table-row>
-            <xsl:if test="@otherlevel eq 'pagebreak'">
+            <xsl:if test="@otherlevel eq 'pagebreak' and position() gt 1">
                 <xsl:attribute name="break-before" select="'page'"/>
             </xsl:if>
             <xsl:call-template name="dsc-table-row-border">

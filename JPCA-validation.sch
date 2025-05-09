@@ -16,6 +16,18 @@
 
     <sch:let name="c" value="'^c$|^c[0|1]'"/> 
     
+    <!-- rights note test -->
+    <sch:pattern>
+        <sch:rule context="ead2002:userestrict[ead2002:head = 'Rights Statement']">
+            <sch:let name="id" value="../@id"/>
+            <sch:let name="preferred-text" value="'Some or all of the photos in this folder may be subject to copyright or other intellectual property rights.'"/>
+            <sch:let name="current-text" value="ead2002:note/ead2002:p/normalize-space()"/>
+            <sch:assert test="$current-text eq $preferred-text">
+                The rights statement for, <xsl:value-of select="$id"/>, is unexpected: <xsl:value-of select="$current-text"/>
+            </sch:assert>
+        </sch:rule>
+    </sch:pattern>
+    
     <!-- level test -->
     <sch:pattern>
         <sch:rule context="ead2002:*[matches(local-name(), $c)]/@level">
@@ -25,6 +37,19 @@
             </sch:assert>
         </sch:rule>
     </sch:pattern>
+    
+    <!-- title test -->
+    <!-- but maybe this is okay in Ebony Fashion Fair, etc. 
+    <sch:pattern>
+        <sch:rule context="ead2002:*[matches(local-name(), $c)]/ead2002:did 
+            | ead2002:archdesc/ead2002:did">
+            <sch:let name="id" value="(../@id, ../../ead2002:eadheader/ead2002:eadid)[1]"/>
+            <sch:assert test="ead2002:unittitle">
+                The following component, <xsl:value-of select="$id"/>, is missing a title. While perfectly valid for archival description, that is unusual for the JPCA project's data model.  Check it out!
+            </sch:assert>
+        </sch:rule>
+    </sch:pattern>
+    -->
     
     <!-- ensure that terminal components have containers -->
     <sch:pattern id="terminal-components">

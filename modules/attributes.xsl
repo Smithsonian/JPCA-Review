@@ -29,7 +29,7 @@
         <xsl:attribute name="font-weight">bold</xsl:attribute>
         <xsl:attribute name="keep-with-next.within-page">always</xsl:attribute>
     </xsl:attribute-set>
-    <xsl:attribute-set name="h4" use-attribute-sets="header-serif">
+    <xsl:attribute-set name="h4" use-attribute-sets="header-serif"> <!-- used for page break headers -->
         <xsl:attribute name="role">H4</xsl:attribute>
         <xsl:attribute name="font-size">14pt</xsl:attribute>
         <xsl:attribute name="font-weight">bold</xsl:attribute>

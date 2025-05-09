@@ -88,6 +88,7 @@
     <!-- header and footer templates (end)-->
     
     <!-- archdesc named templates (start)-->
+    <!-- all labels should be pulled from a configuration file, instead, with i18n options -->
     <xsl:template name="holding-repository">
         <fo:list-item xsl:use-attribute-sets="collection-overview-list-item">
             <fo:list-item-label xsl:use-attribute-sets="collection-overview-list-label">
@@ -347,9 +348,6 @@
                 </xsl:if>
                 <xsl:choose>
                     <xsl:when test="$last-row">
-                        <!--
-                <xsl:attribute name="border-bottom-color">#222222</xsl:attribute>
-                -->
                         <xsl:attribute name="border-bottom-color">#dddddd</xsl:attribute>
                     </xsl:when>
                     <xsl:when test="$no-children">
