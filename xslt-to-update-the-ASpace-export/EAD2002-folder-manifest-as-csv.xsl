@@ -20,14 +20,17 @@
     <!-- make the headers dynamic... later -->
     <xsl:template match="/">
         <!-- this file has headers -->
-        <xsl:value-of select="string-join(('EADID', 'Collection Title', 'RefID', 'Box Profile', 'Box Type', 'Box Indicator', 'Folder Indicator', 'Multiple Folders in Same Box?', 'First Item #', 'Last Item #'), $delim) || $break"/>
-        <xsl:apply-templates select="//ead2002:*[matches(local-name(), $c)]/ead2002:did">
-            <xsl:sort select="ead2002:container[not(@parent)]/@type" data-type="text"/>
-            <xsl:sort select="ead2002:container[not(@parent)]" data-type="text"/>
+        <xsl:value-of select="string-join(('EADID', 'Collection Title', 'RefID', 'Box Profile', 'Box Type', 'Box Indicator', 'Folder Indicator', 'Multiple Folders in Same Box?', 'First Object #', 'Last Object #'), $delim) || $break"/>
+        <xsl:apply-templates select="//ead2002:*[matches(local-name(), $c)]/ead2002:did/ead2002:container[@type='folder']">
+            <xsl:sort select="preceding-sibling::ead2002:container[@id eq current()/@parent]/@type" data-type="text"/>
+            <xsl:sort select="preceding-sibling::ead2002:container[@id eq current()/@parent]" data-type="text"/>
         </xsl:apply-templates>
     </xsl:template>
     
     <xsl:template match="ead2002:container[@type='folder']">
+        <xsl:variable name="faux-code-of-current-parent-container" select="preceding-sibling::ead2002:container[@id eq current()/@parent]/@type || preceding-sibling::ead2002:container[@id eq current()/@parent]/normalize-space()" as="xs:string"/>
+        <xsl:variable name="fingerprint-sum-of-parent-containers" select="(for $x in ../ead2002:container[not(@parent)]
+            return number(($x/@type || $x) eq $faux-code-of-current-parent-container)) => sum()"/>
         <!-- could turn this into a function, but just adding it here for now since the file is slightly shorter -->
         <xsl:value-of select="$quote || $EADID || $quote || $delim"/>
         <!-- collection title -->
@@ -43,7 +46,7 @@
         <!-- folder indicator -->
         <xsl:value-of select="$quote || normalize-space(.)|| $quote || $delim"/>
         <!-- multiple folders per box boolean -->
-        <xsl:value-of select="if (count(../ead2002:container[@parent eq current()/@parent]) gt 1) then 'Multiple Folders Be Here' else 'Nope'"/>
+        <xsl:value-of select="if ($fingerprint-sum-of-parent-containers gt 1) then 'Multiple Folders Be Here' else 'Nope'"/>
         <!-- leaving 2 empty columns for first and later item/object number, to be filled in during digitization process -->
         <xsl:value-of select="$delim || $delim || $break"/>
     </xsl:template>
