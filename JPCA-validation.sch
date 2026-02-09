@@ -193,10 +193,23 @@
             or 
             ead2002:did/ead2002:unittitle/matches(., 'of\d{1,4}')]">
             <let name="id" value="@id"/>
-            <report test="true()"> We'e got a spacing issue! Check out <xsl:value-of select="$id"/>.
+            <report test="true()"> We've got a spacing issue! Check out <xsl:value-of select="$id"/>.
                 There appears to be an issue with the current title, which is: <xsl:value-of
                     select="ead2002:did/ead2002:unittitle"/>
             </report>
+        </rule>
+    </pattern>
+    
+    <!-- multiple note tests -->
+    <!-- beyond physdesc and scopecontent, what else is needed here? -->
+    <!-- do we also need to add a filter here based on the level, e.g. file vs. series? -->
+    <pattern>
+        <rule context="ead2002:*[matches(local-name(), $c)]">
+            <let name="id" value="@id"/>          
+            <let name="did-notes-that-should-not-repeat" value="('physdesc')"/>
+            <let name="non-did-notes-that-should-not-repeat" value="('scopecontent')"/>
+            <report test="ead2002:did/*[local-name() = $did-notes-that-should-not-repeat][2]"> Unfortunately, this component has more than one identification note of the same type. Check out <xsl:value-of select="$id"/>.</report>
+            <report test="*[local-name() = $non-did-notes-that-should-not-repeat][2]"> Unfortunately, this component has more than one narrative note of the same type. Check out <xsl:value-of select="$id"/>.</report>
         </rule>
     </pattern>
 
