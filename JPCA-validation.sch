@@ -13,7 +13,7 @@
         Any duplicate agent-persons
         ???
     -->
-    
+
     <!-- 
     collections to exclude / different validation phases :
         /repositories/2/resources/7        A/V:      2023.M.24-AV
@@ -182,6 +182,21 @@
                             not($x eq $last-folder)
                         })"/> -- end in <xsl:value-of select="$last-folder"
                 /></assert>
+        </rule>
+    </pattern>
+    
+    <!--
+        <unittitle>Folder Nof ***or*** ofN</unittitle> tests
+     -->
+    <pattern>
+        <rule context="ead2002:*[ead2002:did/ead2002:unittitle/matches(., '^Folder \d{1,4}of')
+            or 
+            ead2002:did/ead2002:unittitle/matches(., 'of\d{1,4}')]">
+            <let name="id" value="@id"/>
+            <report test="true()"> We'e got a spacing issue! Check out <xsl:value-of select="$id"/>.
+                There appears to be an issue with the current title, which is: <xsl:value-of
+                    select="ead2002:did/ead2002:unittitle"/>
+            </report>
         </rule>
     </pattern>
 
