@@ -229,6 +229,10 @@
                     <fo:table-column column-number="1" column-width="proportional-column-width(15)"/>
                     <fo:table-column column-number="2" column-width="proportional-column-width(85)"/>
                 </xsl:when>
+                <xsl:when test="$column-types eq 'd-c'">
+                    <fo:table-column column-number="1" column-width="proportional-column-width(85)"/>
+                    <fo:table-column column-number="2" column-width="proportional-column-width(15)"/>
+                </xsl:when>
                 <xsl:otherwise>
                     <fo:table-column column-number="1" column-width="proportional-column-width(100)"/>
                 </xsl:otherwise>
@@ -288,6 +292,7 @@
             </fo:table-row>
             <!-- a bit of a hack to hide the column headers here, using "white font", but i don't think they're needed
             for the visual layout of the PDF. -->
+            <!-- consider adding back in, with stylized / small headers -->
             <fo:table-row xsl:use-attribute-sets="white-font">
                 <xsl:choose>
                     <xsl:when test="$column-types eq 'c-d-d'">
@@ -315,6 +320,14 @@
                         </fo:table-cell>
                         <fo:table-cell>
                             <fo:block>Description</fo:block>
+                        </fo:table-cell>   
+                    </xsl:when>
+                    <xsl:when test="$column-types eq 'd-c'">
+                        <fo:table-cell>
+                            <fo:block>Description</fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell>
+                            <fo:block>Container</fo:block>
                         </fo:table-cell>   
                     </xsl:when>
                     <xsl:otherwise>
@@ -414,6 +427,7 @@
         -->
         <xsl:for-each select="$series-of-series[normalize-space()]">
             <fo:inline>
+                <!-- FIX ME: update so that we don't split strings in the middle of a word -->
                 <xsl:value-of select="if (string-length(.) gt $longest-length-allowed) 
                     then concat(substring(., 1, $longest-length-allowed), ' [...]') 
                     else ."/>
