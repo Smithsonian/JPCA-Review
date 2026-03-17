@@ -75,6 +75,10 @@
     <xsl:attribute-set name="margin-after-large">
         <xsl:attribute name="margin-bottom">48pt</xsl:attribute>
     </xsl:attribute-set>
+    
+    <xsl:attribute-set name="margin-after-medium">
+        <xsl:attribute name="margin-bottom">24pt</xsl:attribute>
+    </xsl:attribute-set>
 
     <xsl:attribute-set name="margin-after-small">
         <xsl:attribute name="margin-bottom">10pt</xsl:attribute>
@@ -165,11 +169,11 @@
     <xsl:attribute-set name="list.head" use-attribute-sets="header-serif">
         <xsl:attribute name="font-weight">bold</xsl:attribute>
     </xsl:attribute-set>
-
-    <!-- <item> Attribute Set -->
-    <xsl:attribute-set name="list.item">
-        <xsl:attribute name="font-weight">normal</xsl:attribute>
-        <xsl:attribute name="space-after">3pt</xsl:attribute>
+    
+    <!-- <list> Attribute Set -->
+    <xsl:attribute-set name="list.body">
+        <!-- FIX ME:  I didn't have wifi for help accessing the FO manual -->
+        <xsl:attribute name="start-indent">body-start()</xsl:attribute>
     </xsl:attribute-set>
 
     <!-- <chronlist> Head Attribute Set -->
@@ -207,18 +211,6 @@
         <xsl:attribute name="border-width">2pt</xsl:attribute>
         <xsl:attribute name="border-style">solid</xsl:attribute>
         <xsl:attribute name="border-color">red</xsl:attribute>
-    </xsl:attribute-set>
-    
-    <xsl:attribute-set name="request.block">
-        <xsl:attribute name="border-width">1pt</xsl:attribute>
-        <xsl:attribute name="border-style">solid</xsl:attribute>
-        <xsl:attribute name="border-color">#D3D3D3</xsl:attribute>
-        <xsl:attribute name="fox:border-radius">4pt 8pt</xsl:attribute>
-        <xsl:attribute name="padding">4pt</xsl:attribute>
-        <xsl:attribute name="text-align">center</xsl:attribute>
-        <xsl:attribute name="margin-bottom">10pt</xsl:attribute>
-        <xsl:attribute name="margin-top">10pt</xsl:attribute>
-        <xsl:attribute name="font-size">7pt</xsl:attribute>
     </xsl:attribute-set>
     
     <xsl:attribute-set name="table-container-column">

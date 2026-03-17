@@ -17,7 +17,7 @@
         <!-- quick change for JPCA -->
         <xsl:variable name="column-types" select="
             if
-            (true()) then 'c-d' (: override all the other options, and just go with a two column table for JPCA? :)
+            (true()) then 'd-c' (: override all the other options, and just go with a two column table for JPCA? :)
             else if (ead3:*[matches(local-name(), '^c0|^c1') or local-name()='c'][descendant-or-self::ead3:unitdate or descendant-or-self::ead3:unitdatestructured][descendant-or-self::ead3:container])
             then 'c-d-d'
             else
@@ -66,7 +66,7 @@
         <xsl:variable name="cell-margin" select="concat(xs:string($depth * 6), 'pt')"/> <!-- e.g. 0, 8pt for c02, 16pt for c03, etc.-->
         <xsl:variable name="column-types" select="
             if
-            (true()) then 'c-d' (: override all the other options, and just go with a two column table for JPCA? :)
+            (true()) then 'd-c' (: override all the other options, and just go with a two column table for JPCA? :)
             else if (ead3:*[matches(local-name(), '^c0|^c1') or local-name()='c'][descendant-or-self::ead3:unitdate or descendant-or-self::ead3:unitdatestructured][descendant-or-self::ead3:container])
             then 'c-d-d'
             else
@@ -337,6 +337,50 @@
                         </fo:block-container>
                     </fo:table-cell>
                 </xsl:when>
+                <xsl:when test="$column-types eq 'd-c'">
+                    <fo:table-cell xsl:use-attribute-sets="dsc-table-cells">
+                        <fo:block>
+                            <xsl:choose>
+                                <xsl:when test="$first-row eq true()">
+                                    <fo:marker marker-class-name="continued-text"/>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <fo:marker marker-class-name="continued-text">
+                                        <fo:inline>
+                                            <xsl:call-template name="ancestor-info"/>
+                                        </fo:inline>
+                                    </fo:marker>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </fo:block>
+                        <!-- do the title and/or date stuff here -->
+                        <fo:block-container margin-left="{$cell-margin}" id="{if (@id) then @id else generate-id(.)}">
+                            <fo:block-container>
+                                <fo:block xsl:use-attribute-sets="margin-after-tiny">
+                                    <xsl:call-template name="combine-identifier-title-and-dates"/>
+                                </fo:block>
+                                <!-- still need to add the other did elements, and select an order -->
+                                <fo:block>
+                                    <xsl:apply-templates select="ead3:did" mode="dsc"/>
+                                </fo:block>
+                            </fo:block-container>
+                            <fo:block-container>
+                                <fo:block>
+                                    <xsl:apply-templates select="ead3:bioghist, ead3:scopecontent
+                                        , ead3:acqinfo, ead3:custodhist, ead3:accessrestrict, ead3:userestrict, ead3:prefercite
+                                        , ead3:processinfo, ead3:altformavail, ead3:relatedmaterial, ead3:separatedmaterial, ead3:accruals, ead3:appraisals
+                                        , ead3:originalsloc, ead3:otherfindaid, ead3:phystech, ead3:fileplan, ead3:odd, ead3:bibliography, ead3:arrangement, ead3:controlaccess" mode="dsc"/>
+                                </fo:block>
+                            </fo:block-container>
+                        </fo:block-container>
+                    </fo:table-cell>
+                    <fo:table-cell xsl:use-attribute-sets="dsc-table-cells">
+                        <xsl:call-template name="container-layout">
+                            <xsl:with-param name="containers-sorted-by-localtype" select="$containers-sorted-by-localtype"/>
+                        </xsl:call-template>
+                    </fo:table-cell>
+                </xsl:when>
+                
                 <xsl:otherwise>
                     <fo:table-cell xsl:use-attribute-sets="dsc-table-cells">
                         <fo:block>
@@ -399,17 +443,8 @@
             <xsl:with-param name="container-lower-case" select="$container-lower-case"/>
         </xsl:call-template>
         
-        <!-- and here's where we print out the actual container indicator... and since barcodes could extend the margin without having a space for a newline, we'll make those smaller, at 7pt. -->
-        <xsl:choose>
-            <xsl:when test="$container-lower-case eq 'item_barcode'">
-                <fo:inline font-size="7pt">
-                    <xsl:apply-templates/>
-                </fo:inline>
-            </xsl:when>
-            <xsl:otherwise>
-                <xsl:apply-templates/>
-            </xsl:otherwise>
-        </xsl:choose>
+        <!-- and here's where we print out the actual container indicator -->
+        <xsl:apply-templates/>
 
         <!-- comma separator or no? -->
         <xsl:if test="position() ne last()">

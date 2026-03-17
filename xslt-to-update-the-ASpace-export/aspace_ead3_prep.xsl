@@ -7,11 +7,7 @@
 
   <!-- 
   to do:
-
-  1)
-  strip any notes that only have a head element, and no text otheriwse.
-
-  2)
+  
   ??
   
   -->
@@ -59,11 +55,7 @@
   
   <!-- start new -->
   
-  
-  <!-- remove duplicative physdesc notes, if they match their parent's title 
-  <xsl:template match="ead3:physdesc[normalize-space() eq ../../../ead3:did/ead3:unittitle/normalize-space()]"/>
-  -->
-  
+  <!-- add in recordgrp level, which we'll need for linking / condensed PDF -->
   <xsl:template match="ead3:dsc/ead3:c[not(@otherlevel)] | ead3:c01[not(@otherlevel)] | *[matches(local-name(), '^c$|^c[0|1]')][parent::*[@otherlevel]]" priority="5">
     <xsl:element name="c" namespace="http://ead3.archivists.org/schema/">
       <xsl:apply-templates select="@* except @level"/>
@@ -72,10 +64,12 @@
     </xsl:element>
   </xsl:template>
   
+  <!-- Must be fixed in ASpace.... no database values should double as translation values -->
   <xsl:template match="@otherlevel[. eq 'Page Break']">
     <xsl:attribute name="otherlevel" select="'pagebreak'"/>
   </xsl:template>
   
+  <!-- Consider adding back in, if we want the Slugs to remain once we add those as external ids -->
   <xsl:template match="ead3:unitid[@localtype]"/>
   
   <xsl:template match="@altrender | @localtype">
@@ -180,30 +174,6 @@
   </xsl:template>
 
 
-  <!-- we're hacking our way to better subjects/agents in ASpace.
-    one problem with that is that we're adding subfield delimerts like "$t:"
-    to ASpace's qualifier field.  Here's where we strip those values out, since they're pointless for the display
-    -->
-  <xsl:template match="ead3:part[matches(., '\$\w: ')]/text()">
-    <xsl:value-of select="replace(., '\$\w: ', '')"/>
-  </xsl:template>
-    
- <!-- going with a less extreme strategy for the time being.  
-   see the ead3:title/ead3:emph template much further down,
-   which replaces these 3 templates ...
-   
-  <xsl:template match="ead3:title/ead3:emph"/>
-  
-  <xsl:template match="ead3:part[preceding-sibling::ead3:emph[1]]">
-    <xsl:copy>
-      <xsl:apply-templates select="preceding-sibling::ead3:emph[1], node()" mode="copy"/>
-    </xsl:copy>
-  </xsl:template>
-  
-  <xsl:template match="ead3:part[not(preceding-sibling::*)][not(node())]"/>
-  -->
-
-
 
   <!-- in ASpace, we don't want to include links that start with "aspace_".
     Therefore, if the link is to a note or a component of a finding aid that was created
@@ -240,10 +210,6 @@
     <xsl:attribute name="parent" select="if ($component-id)  then concat($component-id, '_c', $parent-position) else generate-id(../preceding-sibling::ead3:container[1][@id])"/>
   </xsl:template>
 
-  <!-- removed container ranges bit.
-    keep as is.  in the xsl-fo part, we can create 
-    the condense range, as needed for display
-    -->
 
 
   <!--aspace exports empty type/localtype attributes on containers that don't have a container type.
@@ -261,49 +227,10 @@
     </xsl:attribute>
   </xsl:template>
 
-  <!-- mdc: hack for beinecke.edwards (and any other collections/sections we
-    need to model deliverable units within top containers)-->
-  <xsl:template match="ead3:container[@localtype = ('parent_barcode', 'parent_box')]"/>
-  
-  <xsl:template match="ead3:container[@localtype eq 'folder'][following-sibling::ead3:container[1][@localtype eq 'parent_box']]">
-    <xsl:copy>
-      <xsl:attribute name="localtype" select="'box'"/>
-      <xsl:attribute name="id">
-        <xsl:apply-templates select="following-sibling::ead3:container[1]/@id"/>
-      </xsl:attribute>
-      <!-- of course, this wouldn't work very well if we allowed mixed-content for container indicators, but why would we???-->
-      <xsl:value-of select="following-sibling::ead3:container[1]"/>
-    </xsl:copy>
-    <xsl:copy>
-      <xsl:apply-templates select="@localtype|@id"/>
-      <xsl:attribute name="parent">
-        <xsl:apply-templates select="following-sibling::ead3:container[1]/@id"/>
-      </xsl:attribute>
-      <xsl:apply-templates/>
-    </xsl:copy>
-  </xsl:template>
-
 
   <!-- let's remove those AT database IDs even if we keep internal-only elements around.-->
   <xsl:template match="ead3:unitid[@type]" priority="3"/>
 
-  <!-- MDC:  new additions for new data-entry rules in ArchivesSpace !!! -->
-  <xsl:template match="ead3:*[@level = 'series']/ead3:did/ead3:unitid[matches(., '^\d+$')]" priority="2">
-    <xsl:variable name="roman-numeral">
-      <xsl:number value="." format="I"/>
-    </xsl:variable>
-    <xsl:copy>
-      <xsl:apply-templates select="@*"/>
-      <xsl:value-of select="concat('Series ', $roman-numeral)"/>
-    </xsl:copy>
-  </xsl:template>
-  
-  <xsl:template match="ead3:*[@level = 'subseries']/ead3:did/ead3:unitid[not(matches(normalize-space(.), '^subseries', 'i'))]" priority="2">
-    <xsl:copy>
-      <xsl:apply-templates select="@*"/>
-      <xsl:value-of select="concat('Subseries ', normalize-space(.))"/>
-    </xsl:copy>
-  </xsl:template>
 
   <!-- ArchivesSpace Extent subrecords, EAD3 style (which is much easier to handle than EAD2002 style):  let's deal with 'em.
 
@@ -409,52 +336,9 @@ So, all that we need to do here
     </xsl:copy>
   </xsl:template>
 
-
-
-  <!-- silly hack to deal with the fact that ASpace won't allow notes over 65k.
-    might want to try this with for-each-group instead.
-    remove when no longer necessary-->
-  <xsl:template match="ead3:*[matches(ead3:head, '^\d\)')][1]" priority="2">
-    <xsl:variable name="grouping-element-name" select="local-name()"/>
-    <xsl:copy>
-      <xsl:apply-templates select="@*"/>
-      <xsl:element name="head" namespace="http://ead3.archivists.org/schema/">
-        <xsl:value-of select="substring-after(ead3:head, ') ')"/>
-      </xsl:element>
-      <xsl:apply-templates select="ead3:* except ead3:head"/>
-      <xsl:apply-templates select="../ead3:*[local-name() = $grouping-element-name][matches(ead3:head, '^\d\)')][position() gt 1]/ead3:*[not(local-name() = 'head')]"/>
-    </xsl:copy>
-  </xsl:template>
-  <xsl:template match="ead3:*[matches(ead3:head, '^\d\)')][position() gt 1]" priority="2"/>
-
-
-  <!-- check with MSSA to see if they still need their "Forms part of:" rule
-    for odd elements with that head element -->
-
-  <!-- do we still need this?? -->
-  <!-- no.  we're now going to keep the sources as is and display them in a control access section under a specific heading-->
-  <!-- <xsl:template match="ead3:archdesc/ead3:did/ead3:origination[@label = 'source']"/> -->
-  <!-- but we now need to remove empty controlaccess elements, since we've changed the aspace behavior of DUPLICATING every source in the EAD output.  for shame, aspace -->
-  <!-- normally we wouldn't delete an element like this, but since EAD requires the element to have children elements, we don't need to worry about any attributes, etc. -->
-  <!-- this also holds true for an empty controlacess element, which won't have any element matches, so we can eliminate both instances of empty controlaccess sections with the same xpath -->
+  <!-- removes the parent controlaccess element if every child element is internal only, and therefore, would be stripped away.
+    if we don't do this, the resulting EAD file would be invalid -->
   <xsl:template match="ead3:controlaccess[every $x in * satisfies $x[@audience='internal']]"/>
-
-
-  <xsl:template match="ead3:physdesc">
-    <xsl:copy>
-      <xsl:apply-templates select="@*"/>
-      <xsl:choose>
-        <!-- hack for "0 See container summary" statements
-        when ASpace removes this requuirement, we can remove this hack-->
-        <xsl:when test="ead3:extent[1][starts-with(normalize-space(lower-case(.)), '0 ')]">
-          <xsl:apply-templates select="ead3:extent[2]"/>
-        </xsl:when>
-        <xsl:otherwise>
-          <xsl:apply-templates/>
-        </xsl:otherwise>
-      </xsl:choose>
-    </xsl:copy>
-  </xsl:template>
 
 
 <!-- we'll have to update how ASpace deals with languages (and languagesets)
@@ -485,7 +369,6 @@ So, all that we need to do here
       <xsl:apply-templates/>
     </xsl:copy>
   </xsl:template>
-
 
 
   <!-- hack to remove the extra paragraph element that ASpace inserts before hard-coded table elements -->

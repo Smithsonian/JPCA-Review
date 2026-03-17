@@ -5,7 +5,7 @@
   
   <!-- Base URL for resolving relative URLs -->
   <base>./</base>
-
+  
   <!-- Font Base URL for resolving relative font URLs -->
   <font-base>./</font-base>
   
@@ -13,10 +13,10 @@
   <source-resolution>72</source-resolution>
   <!-- Target resolution in dpi (dots/pixels per inch) for specifying the target resolution for generated bitmaps, default: 72dpi -->
   <target-resolution>72</target-resolution>
-
+  
   <!-- Default page-height and page-width, in case value is specified as auto -->
   <default-page-settings height="11.00in" width="8.50in"/>
-
+  
   <!-- Information for specific renderers -->
   <!-- Uses renderer mime type for renderers -->
   <renderers>
@@ -59,7 +59,7 @@
         <font embed-url="config/font-preview/Kurinto/KurintoText-It.ttf?raw=true">
           <font-triplet name="KurintoText" style="italic" weight="normal"/>
         </font>
- 
+        
         <font kerning="yes" embed-url="config/font-preview/Open_Sans/OpenSans-Regular.ttf?raw=true">
           <font-triplet name="Open_Sans" style="normal" weight="normal"/>
         </font>
@@ -72,8 +72,8 @@
         <font kerning="yes" embed-url="config/font-preview/Open_Sans/OpenSans-Italic.ttf?raw=true">
           <font-triplet name="Open_Sans" style="italic" weight="normal"/>
         </font>
-
-	     <font kerning="yes" embed-url="config/font-preview/NotoSans/NotoSans-Regular.ttf?raw=true">
+        
+        <font kerning="yes" embed-url="config/font-preview/NotoSans/NotoSans-Regular.ttf?raw=true">
           <font-triplet name="NotoSans" style="normal" weight="normal"/>
         </font>
         <font kerning="yes" embed-url="config/font-preview/NotoSans/NotoSans-Bold.ttf?raw=true">
@@ -86,7 +86,7 @@
           <font-triplet name="NotoSans" style="italic" weight="normal"/>
         </font>
         
-
+        
         <!-- A few more languages, since we don't have a standard way yet of referencing languages/scripts of description in ASpace...
         but could use the EAD3 foreign element in notes, perhaps. -->
         <!-- Arabic -->
@@ -125,28 +125,28 @@
         <font kerning="yes" embed-url="config/fonts/SourceHanSerif/SourceHanSerifK-Regular.otf">
           <font-triplet name="SourceHanSerifK" style="normal" weight="normal"/>
         </font>
-
-
+        
+        
       </fonts>
-
-
+      
+      
     </renderer>
-
-
+    
+    
     <renderer mime="application/pdf">
       <filterList>
         <!-- provides compression using zlib flate (default is on) -->
         <value>flate</value>
-
+        
         <!-- encodes binary data into printable ascii characters (default off)
              This provides about a 4:5 expansion of data size -->
         <!-- <value>ascii-85</value> -->
-
+        
         <!-- encodes binary data with hex representation (default off)
              This filter is not recommended as it doubles the data size -->
         <!-- <value>ascii-hex</value> -->
       </filterList>
-
+      
       <fonts>
         <!-- embedded fonts -->
         <!--
@@ -170,7 +170,7 @@
                           | 500 | 600 | 700 | 800 | 900
         (normal = 400, bold = 700)
         -->
-
+        
         <!--
         <font metrics-url="arial.xml" kerning="yes" embed-url="arial.ttf">
           <font-triplet name="Arial" style="normal" weight="normal"/>
@@ -181,19 +181,19 @@
           <font-triplet name="ArialMT" style="normal" weight="bold"/>
         </font>
         -->
-
+        
         <!-- auto-detect fonts -->
         <auto-detect/>
-
+        
       </fonts>
-
+      
       <!-- This option lets you specify additional options on an XML handler -->
       <!--xml-handler namespace="http://www.w3.org/2000/svg">
         <stroke-text>false</stroke-text>
       </xml-handler-->
-
+      
     </renderer>
-
+    
     <renderer mime="application/postscript">
       <!-- This option forces the PS renderer to rotate landscape pages -->
       <!--auto-rotate-landscape>true</auto-rotate-landscape-->
@@ -202,38 +202,38 @@
         <stroke-text>false</stroke-text>
       </xml-handler-->
     </renderer>
-
+    
     <renderer mime="application/vnd.hp-PCL"> </renderer>
-
+    
     <!-- MIF does not have a renderer
     <renderer mime="application/vnd.mif">
     </renderer>
     -->
-
+    
     <renderer mime="image/svg+xml">
       <format type="paginated"/>
       <link value="true"/>
       <strokeText value="false"/>
     </renderer>
-
+    
     <renderer mime="application/awt"> </renderer>
-
+    
     <renderer mime="image/png">
       <!--transparent-page-background>true</transparent-page-background-->
     </renderer>
-
+    
     <renderer mime="image/tiff">
       <!--transparent-page-background>true</transparent-page-background-->
       <!--compression>CCITT T.6</compression-->
     </renderer>
-
+    
     <renderer mime="text/xml"> </renderer>
-
+    
     <!-- RTF does not have a renderer
     <renderer mime="text/rtf">
     </renderer>
     -->
-
+    
   </renderers>
-
+  
 </fop>

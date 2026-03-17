@@ -41,7 +41,7 @@
     a lot of these are handled differently as a LIST, however, when at the collection level.-->
   <xsl:template
     match="
-      ead3:unitid | ead3:abstract | ead3:addressline | ead3:langmaterial | ead3:materialspec | ead3:origination | ead3:physdesc[not(@localtype = 'container_summary')]
+      ead3:unitid | ead3:abstract | ead3:addressline | ead3:langmaterial | ead3:materialspec | ead3:physdesc[not(@localtype = 'container_summary')]
       | ead3:physloc | ead3:repository"
     mode="dsc" priority="2">
     <!--  italicize physdesc notes.
@@ -58,6 +58,24 @@
         </xsl:otherwise>
       </xsl:choose>
     </fo:block>
+  </xsl:template>
+  
+  <!-- new for JPCA (since there are many components with mulitple creators); adjust attribute sets -->
+  <xsl:template match="ead3:origination" mode="dsc">
+    <fo:list-block>
+      <fo:list-item>
+        <fo:list-item-label>
+          <fo:block>
+            <xsl:text>&#x2022;</xsl:text>
+          </fo:block>
+        </fo:list-item-label>
+        <fo:list-item-body xsl:use-attribute-sets="list.body">
+          <fo:block>
+            <xsl:apply-templates/>
+          </fo:block>
+        </fo:list-item-body>      
+      </fo:list-item>
+    </fo:list-block>
   </xsl:template>
 
   <!-- TO DO: review.  likely will need to add non-standard note headings -->
@@ -712,50 +730,50 @@
   <!-- still need to add those font variants, etc. -->
   <xsl:template match="*[@render = 'bold'] | *[@altrender = 'bold']" mode="#all">
     <fo:inline font-weight="bold">
-      <xsl:if test="preceding-sibling::*"> &#160;</xsl:if>
+      <xsl:if test="preceding-sibling::*">&#160;</xsl:if>
       <xsl:apply-templates/>
     </fo:inline>
   </xsl:template>
   <xsl:template match="*[@render = 'bolddoublequote'] | *[@altrender = 'bolddoublequote']" mode="#all">
     <fo:inline font-weight="bold"><xsl:if test="preceding-sibling::*">
-      &#160;</xsl:if>"<xsl:apply-templates/>"</fo:inline>
+     &#160;</xsl:if>"<xsl:apply-templates/>"</fo:inline>
   </xsl:template>
   <xsl:template match="*[@render = 'boldsinglequote'] | *[@altrender = 'boldsinglequote']" mode="#all">
     <fo:inline font-weight="bold"><xsl:if test="preceding-sibling::*">
-      &#160;</xsl:if>'<xsl:apply-templates/>'</fo:inline>
+     &#160;</xsl:if>'<xsl:apply-templates/>'</fo:inline>
   </xsl:template>
   <xsl:template match="*[@render = 'bolditalic'] | *[@altrender = 'bolditalic']" mode="#all">
     <fo:inline font-weight="bold" font-style="italic">
-      <xsl:if test="preceding-sibling::*"> &#160;</xsl:if>
+      <xsl:if test="preceding-sibling::*">&#160;</xsl:if>
       <xsl:apply-templates/>
     </fo:inline>
   </xsl:template>
   <xsl:template match="*[@render = 'boldsmcaps'] | *[@altrender = 'boldsmcaps']" mode="#all">
     <fo:inline font-weight="bold" font-variant="small-caps">
-      <xsl:if test="preceding-sibling::*"> &#160;</xsl:if>
+      <xsl:if test="preceding-sibling::*">&#160;</xsl:if>
       <xsl:apply-templates/>
     </fo:inline>
   </xsl:template>
   <xsl:template match="*[@render = 'boldunderline'] | *[@altrender = 'boldunderline']" mode="#all">
     <fo:inline font-weight="bold" border-bottom="1pt solid #000">
-      <xsl:if test="preceding-sibling::*"> &#160;</xsl:if>
+      <xsl:if test="preceding-sibling::*">&#160;</xsl:if>
       <xsl:apply-templates/>
     </fo:inline>
   </xsl:template>
   <xsl:template match="*[@render = 'doublequote'] | *[@altrender = 'doublequote']" mode="#all">
-    <xsl:if test="preceding-sibling::*"> &#160;</xsl:if>"<xsl:apply-templates/>"
+    <xsl:if test="preceding-sibling::*">&#160;</xsl:if>"<xsl:apply-templates/>"
   </xsl:template>
   <xsl:template match="*[@render = 'italic'] | *[@altrender = 'italic']" mode="#all">
     <fo:inline font-style="italic">
-      <xsl:if test="preceding-sibling::*"> &#160;</xsl:if>
+      <xsl:if test="preceding-sibling::*">&#160;</xsl:if>
       <xsl:apply-templates/>
     </fo:inline>
   </xsl:template>
   <xsl:template match="*[@render = 'singlequote'] | *[@altrender = 'singlequote']" mode="#all">
-    <xsl:if test="preceding-sibling::*"> &#160;</xsl:if>'<xsl:apply-templates/>' </xsl:template>
+    <xsl:if test="preceding-sibling::*">&#160;</xsl:if>'<xsl:apply-templates/>' </xsl:template>
   <xsl:template match="*[@render = 'smcaps'] | *[@altrender = 'smcaps']" mode="#all">
     <fo:inline font-variant="small-caps">
-      <xsl:if test="preceding-sibling::*"> &#160;</xsl:if>
+      <xsl:if test="preceding-sibling::*">&#160;</xsl:if>
       <xsl:apply-templates/>
     </fo:inline>
   </xsl:template>
