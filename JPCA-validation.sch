@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema xmlns="http://purl.oclc.org/dsdl/schematron"
     xmlns:sqf="http://www.schematron-quickfix.com/validator/process"
-    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    queryBinding="xslt3">
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform" queryBinding="xslt3">
     <ns uri="http://www.w3.org/1999/xlink" prefix="xlink"/>
     <ns uri="urn:isbn:1-931666-22-9" prefix="ead2002"/>
 
@@ -47,7 +46,7 @@
         <rule context="ead2002:userestrict[ead2002:head = 'Rights Statement']">
             <let name="id" value="../@id"/>
             <let name="preferred-text"
-                value="'Some or all of the photos in this folder may be subject to copyright or other intellectual property rights.'"/>
+                value="'Some or all of the materials in this folder may be subject to copyright or other intellectual property rights.'"/>
             <let name="current-text" value="ead2002:note/ead2002:p/normalize-space()"/>
             <assert test="$current-text eq $preferred-text"> The rights statement for, <xsl:value-of
                     select="$id"/>, is unexpected: <xsl:value-of select="$current-text"/>
