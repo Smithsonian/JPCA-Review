@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema xmlns="http://purl.oclc.org/dsdl/schematron"
     xmlns:sqf="http://www.schematron-quickfix.com/validator/process"
-    xmlns:xsl="http://www.w3.org/1999/XSL/Transform" defaultPhase="container-checks"
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     queryBinding="xslt3">
     <ns uri="http://www.w3.org/1999/xlink" prefix="xlink"/>
     <ns uri="urn:isbn:1-931666-22-9" prefix="ead2002"/>
