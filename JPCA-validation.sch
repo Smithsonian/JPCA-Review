@@ -207,7 +207,8 @@
             <report test="ead2002:did/*[local-name() = $did-notes-that-should-not-repeat][2]">
                 Unfortunately, this component has more than one identification note of the same
                 type. Check out <xsl:value-of select="$id"/>.</report>
-            <report test="*[local-name() = $non-did-notes-that-should-not-repeat][2]">
+            <!-- adding the id attribute check to skirt around the sensitive-content scopecontent export pattern -->
+            <report test="*[local-name() = $non-did-notes-that-should-not-repeat][@id][2]">
                 Unfortunately, this component has more than one narrative note of the same type.
                 Check out <xsl:value-of select="$id"/>.</report>
         </rule>
