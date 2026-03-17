@@ -1,7 +1,9 @@
 config/fonts
+config/licensed-fonts
 config/logos
-local_EAD/*/*
-local_EAD/*.xml
+data/*
+local_EAD/*
 .DS_Store
+LOCAL*
 JPCA-Review.xpr
 
