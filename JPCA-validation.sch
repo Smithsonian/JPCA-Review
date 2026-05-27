@@ -28,8 +28,10 @@
             <let name="duplicates" value="$sequence[index-of($sequence, .)[2]]"/>
 
             <report test="count(ead2002:did/ead2002:container[@parent]) gt 1"> Howdy. This
-                component, <xsl:value-of select="$id"/>, which is connected to a container, has
-                multiple top containers. Check those box+folder numbers: <xsl:value-of select="
+                component, <xsl:value-of select="$id"
+                    />, which is connected to a container, has
+                multiple top containers. Check those box+folder numbers: <xsl:value-of
+                    select="
                         string-join((for $x in (ead2002:did/ead2002:container[@label])
                         return
                             $x/@type || ' ' || $x), '; ')"/>
@@ -59,7 +61,8 @@
         <rule context="ead2002:*[matches(local-name(), $c)]/@level">
             <let name="id" value="../@id"/>
             <assert test=". = ('file', 'item', 'otherlevel', 'series', 'subseries')"> The level
-                attribute for, <xsl:value-of select="$id"/>, is unexpected. Please investigate
+                attribute for, <xsl:value-of select="$id"
+                />, is unexpected. Please investigate
             </assert>
         </rule>
     </pattern>
@@ -82,7 +85,8 @@
         <rule context="ead2002:*[matches(local-name(), $c)][not(*[matches(local-name(), $c)])]">
             <let name="id" value="@id"/>
             <assert test="ead2002:did/ead2002:container"> Hold up. This terminal component,
-                    <xsl:value-of select="$id"/>, is missing a container element. </assert>
+                    <xsl:value-of select="$id"
+                />, is missing a container element. </assert>
         </rule>
     </pattern>
 
@@ -91,7 +95,8 @@
         <rule context="ead2002:*[matches(local-name(), $c)][ead2002:did/ead2002:container]">
             <let name="id" value="@id"/>
             <report test="../*[descendant::ead2002:*/ead2002:did/ead2002:container]"> Nope. This
-                component, <xsl:value-of select="$id"/> which is connected to a container, also has
+                component, <xsl:value-of select="$id"
+                /> which is connected to a container, also has
                 at least one descendant that also has associated containers. Check it out! </report>
         </rule>
     </pattern>
@@ -124,7 +129,25 @@
                     select="ead2002:did/ead2002:unittitle"/>
             </report>
         </rule>
-
+        
+        <!-- second, make sure that the title doesn't have any leading whitespace -->
+        <rule context="ead2002:*[ead2002:did/ead2002:unittitle/matches(., '^ Folder')]">
+            <let name="id" value="@id"/>
+            <report test="true()"> We've got whitespace issues. Check out <xsl:value-of select="$id"/>.
+                There appears to be leading space(s) in the current title, which is: <xsl:value-of
+                    select="ead2002:did/ead2002:unittitle"/>
+            </report>
+        </rule>
+       
+        <!-- third, make sure that the title doesn't have any trailing whitespace -->
+        <rule context="ead2002:*[ead2002:did/ead2002:unittitle/matches(., '\d{1,4} $')]">
+            <let name="id" value="@id"/>
+            <report test="true()"> We've got whitespace issues. Check out <xsl:value-of select="$id"/>.
+                There appears to be trailing space(s) in the current title, which is: <xsl:value-of
+                    select="ead2002:did/ead2002:unittitle"/>
+            </report>
+        </rule>
+        
         <rule
             context="ead2002:*[matches(local-name(), $c)][matches(ead2002:*[matches(local-name(), $c)][1]/ead2002:did/ead2002:unittitle[1], '^Folder 1 of \d{1,4}$')]">
             <let name="id" value="@id"/>
@@ -134,8 +157,10 @@
 
             <!-- simple test -->
             <assert test="$component-count eq $last-folder">Whoopsie. The last folder in component
-                group <xsl:value-of select="$id"/> is <xsl:value-of select="$last-folder"/>, but the
-                total component count is, <xsl:value-of select="$component-count"/>. Those values
+                group <xsl:value-of select="$id"/> is <xsl:value-of
+                    select="$last-folder"/>, but the
+                total component count is, <xsl:value-of
+                    select="$component-count"/>. Those values
                 should match.</assert>
 
             <!-- more exhaustive test, to ensure that all the numbers are in order... e.g., no instances of 1, 3, 2. -->
@@ -171,7 +196,8 @@
             <assert test="
                     every $n in $all-last-folders
                         satisfies $n eq $last-folder">Range Error: There's a problem
-                with the folder range expression of component group <xsl:value-of select="$id"/>.
+                with the folder range expression of component group <xsl:value-of
+                    select="$id"/>.
                 Not all of the values -- i.e, <xsl:value-of select="
                         filter(distinct-values($all-last-folders), function ($x) {
                             not($x eq $last-folder)
@@ -190,7 +216,7 @@
                 ead2002:did/ead2002:unittitle/matches(., 'of\d{1,4}')]">
             <let name="id" value="@id"/>
             <report test="true()"> We've got a spacing issue! Check out <xsl:value-of select="$id"
-                />. There appears to be an issue with the current title, which is: <xsl:value-of
+                    />. There appears to be an issue with the current title, which is: <xsl:value-of
                     select="ead2002:did/ead2002:unittitle"/>
             </report>
         </rule>
@@ -237,7 +263,8 @@
         <rule context="ead2002:unitdate[@normal[not(matches(., '\.\.|/'))]]">
             <assert test="
                     every $d in (@normal[not(matches(., '\.\.|/'))])
-                        satisfies matches($d, $iso8601-regex)">The <emph>normal</emph>
+                        satisfies matches($d, $iso8601-regex)"
+                >The <emph>normal</emph>
                 attribute of <name/> must match the TS-EAS subprofile of valid ISO 8601
                 dates.</assert>
         </rule>
@@ -246,10 +273,12 @@
         <rule context="ead2002:unitdate[@normal[matches(., '\.\.|/')]]">
             <assert test="
                     every $d in (tokenize(@normal, '(\.\.)|(/)')[normalize-space()])
-                        satisfies matches($d, $iso8601-regex)">All <emph>normal</emph>
+                        satisfies matches($d, $iso8601-regex)"
+                >All <emph>normal</emph>
                 attributes in a valid date range must match the TS-EAS subprofile of valid ISO 8601
                 dates.</assert>
-            <report test="count(tokenize(@normal, '(\.\.)|(/)')) &gt;= 3">This date expression has
+            <report test="count(tokenize(@normal, '(\.\.)|(/)')) &gt;= 3"
+                >This date expression has
                 too many range operators. Only a single "/" or ".." is permitted.</report>
         </rule>
     </pattern>
@@ -267,13 +296,15 @@
                         (($year mod 4 = 0 and $year mod 100 != 0) or $year mod 400 = 0)
                     else
                         false()"/>
-            <report test="matches(replace(@normal, '[%~?]', ''), '-02-30|-02-31')">February dates
+            <report test="matches(replace(@normal, '[%~?]', ''), '-02-30|-02-31')"
+                >February dates
                 cannot have a day value of 30 or 31. Check the value of the "normal"
                 attribute.</report>
             <report
                 test="$year and not($leap-year) and matches(replace(@normal, '[%~?]', ''), '-02-29')"
-                >February 29th may only be encoded for leap years. The year encoded in the "normal"
-                attribute, <xsl:value-of select="$year-string"/>, however, is not a valid leap
+                    >February 29th may only be encoded for leap years. The year encoded in the "normal"
+                attribute, <xsl:value-of select="$year-string"
+                />, however, is not a valid leap
                 year.</report>
         </rule>
     </pattern>
@@ -289,8 +320,10 @@
                         $end_date >= $begin_date
                     else
                         true()"> The normal attribute value for this field needs to be
-                updated. The first date, <xsl:value-of select="$begin_date"/>, is encoded as
-                occurring <emph>before</emph> the end date, <xsl:value-of select="$end_date"/>
+                updated. The first date, <xsl:value-of select="$begin_date"
+                    />, is encoded as
+                occurring <emph>before</emph> the end date, <xsl:value-of
+                    select="$end_date"/>
             </assert>
         </rule>
         <rule context="ead2002:unitdate[matches(@normal, '[0-9]\.\.[0-9]')]">
@@ -304,8 +337,10 @@
                         $end_date gt $begin_date
                     else
                         true()"> The normal attribute value for this field needs to be
-                updated. The first date, <xsl:value-of select="$begin_date"/>, is encoded as
-                occurring <emph>before</emph> the end date, <xsl:value-of select="$end_date"/>
+                updated. The first date, <xsl:value-of select="$begin_date"
+                    />, is encoded as
+                occurring <emph>before</emph> the end date, <xsl:value-of
+                    select="$end_date"/>
             </assert>
         </rule>
     </pattern>
