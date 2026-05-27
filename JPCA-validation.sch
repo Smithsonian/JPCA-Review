@@ -131,7 +131,7 @@
         </rule>
         
         <!-- second, make sure that the title doesn't have any leading whitespace -->
-        <rule context="ead2002:*[ead2002:did/ead2002:unittitle/matches(., '^ Folder')]">
+        <rule context="ead2002:*[ead2002:did/ead2002:unittitle/matches(., '^\s')]">
             <let name="id" value="@id"/>
             <report test="true()"> We've got whitespace issues. Check out <xsl:value-of select="$id"/>.
                 There appears to be leading space(s) in the current title, which is: <xsl:value-of
@@ -140,7 +140,8 @@
         </rule>
        
         <!-- third, make sure that the title doesn't have any trailing whitespace -->
-        <rule context="ead2002:*[ead2002:did/ead2002:unittitle/matches(., '\d{1,4} $')]">
+        <!-- for now, given the large number of titles that have trailing whitespace, this test just homes in on those that likely have a Folder number -->
+        <rule context="ead2002:*[ead2002:did/ead2002:unittitle/matches(., '\d{1,4}\s+$')]">
             <let name="id" value="@id"/>
             <report test="true()"> We've got whitespace issues. Check out <xsl:value-of select="$id"/>.
                 There appears to be trailing space(s) in the current title, which is: <xsl:value-of
